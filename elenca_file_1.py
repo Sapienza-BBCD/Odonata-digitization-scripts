@@ -2,66 +2,72 @@ import os
 from openpyxl import Workbook
 from tkinter import Tk, filedialog
 
-def scegli_cartella():
+# Function to select a folder
+def select_folder():
     root = Tk()
-    root.withdraw()  # Nasconde la finestra principale
-    cartella = filedialog.askdirectory(title="Seleziona la cartella")
-    return cartella
+    root.withdraw()  # Hide the main window
+    folder = filedialog.askdirectory(title="Select the folder")
+    return folder
 
 def main():
-    # Selezione cartella tramite finestra
-    cartella = scegli_cartella()
-    if not cartella:
-        print("Nessuna cartella selezionata.")
+    # Folder selection through dialog window
+    folder = select_folder()
+
+    if not folder:
+        print("No folder selected.")
         return
 
-    # Scelta tipo file
-    print("Scegli il tipo di file da elencare:")
+    # File type selection
+    print("Choose the file type to list:")
     print("1 - HTML")
     print("2 - JPG")
     print("3 - PNG")
     print("4 - XLS / XLSX")
     print("5 - DOC / DOCX")
-    print("6 - Tutti i file")
+    print("6 - All files")
 
-    scelta = input("Inserisci il numero della scelta: ")
+    choice = input("Enter the number corresponding to your choice: ")
 
-    estensioni = {
+    extensions = {
         "1": (".html", ".htm"),
         "2": (".jpg", ".jpeg"),
         "3": (".png",),
         "4": (".xls", ".xlsx"),
         "5": (".doc", ".docx"),
-        "6": None  # Tutti i file
+        "6": None  # All files
     }
 
-    if scelta not in estensioni:
-        print("Scelta non valida.")
+    if choice not in extensions:
+        print("Invalid choice.")
         return
 
-    # Crea Excel
+    # Create Excel workbook
     wb = Workbook()
     ws = wb.active
-    ws.title = "Elenco file"
+    ws.title = "File List"
 
     row = 1
-    for nome_file in os.listdir(cartella):
-        percorso_file = os.path.join(cartella, nome_file)
-        if not os.path.isfile(percorso_file):
+
+    # Scan files in the selected folder
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+
+        if not os.path.isfile(file_path):
             continue
 
-        if estensioni[scelta]:
-            if not nome_file.lower().endswith(estensioni[scelta]):
+        # Filter by selected extension
+        if extensions[choice]:
+            if not filename.lower().endswith(extensions[choice]):
                 continue
 
-        ws.cell(row=row, column=1, value=nome_file)
+        ws.cell(row=row, column=1, value=filename)
         row += 1
 
-    percorso_output = os.path.join(cartella, "Elenco_file.xlsx")
-    wb.save(percorso_output)
+    # Save the Excel file
+    output_path = os.path.join(folder, "File_List.xlsx")
+    wb.save(output_path)
 
-    print(f"Elenco creato con successo: {percorso_output}")
+    print(f"File list successfully created: {output_path}")
 
 if __name__ == "__main__":
     main()
-
