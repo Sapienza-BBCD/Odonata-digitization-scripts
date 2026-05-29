@@ -6,62 +6,63 @@ from jinja2 import Environment
 from tkinter import Tk, messagebox
 from tkinter.filedialog import askopenfilename, askdirectory
 
-# Funzione per selezionare il file Excel
+# Function for selecting the input Excel file
 def select_excel_file():
     root = Tk()
     root.withdraw()
-    return askopenfilename(title="Seleziona il file Excel", filetypes=[("Excel files", "*.xlsx")])
+    return askopenfilename(title="Select the Excel file", filetypes=[("Excel files", "*.xlsx")])
 
-# Funzione per selezionare la cartella delle immagini
+# Function for selecting the directory containing specimen images
 def select_image_folder():
     root = Tk()
     root.withdraw()
-    return askdirectory(title="Seleziona la cartella contenente le immagini")
+    return askdirectory(title="Select the folder containing the images")
 
-# Funzione per selezionare la cartella dei loghi
+# Function for selecting the directory containing logo files
 def select_logo_folder():
     root = Tk()
     root.withdraw()
-    return askdirectory(title="Seleziona la cartella contenente i loghi")
+    return askdirectory(title="Select the folder containing logo files")
 
-# Funzione per selezionare la cartella di output per salvare i file HTML
+# Function for selecting the output directory where generated HTML files will be saved
 def select_output_folder():
     root = Tk()
     root.withdraw()
-    return askdirectory(title="Seleziona la cartella di output per salvare i file HTML")
+    return askdirectory(title="Select the output folder for saving HTML files")
 
-# Funzione per selezionare l'icona home
+# Function to select the home page icon image
 def select_home_icon():
     root = Tk()
     root.withdraw()
-    return askopenfilename(title="Seleziona l'icona home (PNG)", filetypes=[("PNG files", "*.png")])
+    return askopenfilename(title="Select the home icon (PNG)", filetypes=[("PNG files", "*.png")])
 
-# Funzione per copiare file con richiesta di sovrascrittura
+# Function for copying files with user overwrite prompt
 def copy_file_with_prompt(src, dest):
-    # Controlla se il file di origine esiste
+    # Check if the source file exists
     if not os.path.exists(src):
-        print(f"❌ ERRORE: Il file '{src}' non esiste! Salto la copia.")
+        print(f"❌ ERROR: The file '{src}' does not exist! Skipping copy operation.")
         return
 
-    # Controlla se il file sorgente e il file di destinazione sono lo stesso
+    # Verify that the source and destination files are not identical
     if os.path.abspath(src) == os.path.abspath(dest):
-        print(f"ℹ️ Il file '{src}' è già nella destinazione. Nessuna copia necessaria.")
+        print(f"ℹ️ The file '{src}' is already in the destination folder. No copy needed.")
         return
 
-    print(f"🔄 Copiando da: {os.path.abspath(src)} a {os.path.abspath(dest)}")
+    print(f"🔄 copying from: {os.path.abspath(src)} to {os.path.abspath(dest)}")
 
     if os.path.exists(dest):
-        response = messagebox.askyesno("File Esistente", f"Il file '{os.path.basename(dest)}' esiste già.\nVuoi sovrascriverlo?")
+        response = messagebox.askyesno("Existing File", f"The file '{os.path.basename(dest)}' already exists.\nDo you want to overwrite it?"
+)
         if not response:
-            print(f"✅ File mantenuto: {dest}")
+            print(f"✅ File retained: {dest}")
             return
 
     shutil.copy(src, dest)
-    print(f"✅ File copiato: {dest}")
+    print(f"✅ File copied: {dest}")
 
 
 
-# Funzione per creare le pagine HTML
+# Function to generate HTML pages
 def create_html_pages(excel_file, image_folder, logo_folder, output_folder, home_icon):
     df = pd.read_excel(excel_file, engine="openpyxl")
 
@@ -88,26 +89,26 @@ def create_html_pages(excel_file, image_folder, logo_folder, output_folder, home
     <body>
         <div class="container">
             <a href="home.html">
-                <img src="home.png" alt="Home" class="home-icon" class="home-icon">
+                <img src="home.png" alt="Home" class="home-icon">
             </a>
-            <h1 class="italic title">{{ data['NomeScientifico'] }}</h1>
+            <h1 class="italic title">{{ data['ScientificName'] }}</h1>
             <img src="{{ image }}" alt="Image" class="image">
             <h2>Data</h2>
             <table class="data-table">
                 <tbody>
-                    <tr><td>Kingdom:</td><td>{{ data['Regno'] }}</td></tr>
+                    <tr><td>Kingdom:</td><td>{{ data['Kingdom'] }}</td></tr>
                     <tr><td>Phylum:</td><td>{{ data['Phylum'] }}</td></tr>
-                    <tr><td>Class:</td><td>{{ data['Classe'] }}</td></tr>
-                    <tr><td>Order:</td><td>{{ data['Ordine'] }}</td></tr>
-                    <tr><td>Family:</td><td>{{ data['Famiglia'] }}</td></tr>
-                    <tr><td>Genus:</td><td class="italic">{{ data['Genere'] }}</td></tr>
-                    <tr><td>Species:</td><td class="italic">{{ data['Specie'] }}</td></tr>
-                    <tr><td>Identifier:</td><td>{{ data['Identificatore'] }}</td></tr>
-                    <tr><td>Continent:</td><td>{{ data['Continente'] }}</td></tr>
-                    <tr><td>Country:</td><td>{{ data['Paese'] }}</td></tr>
-                    <tr><td>Location:</td><td>{{ data['Località'] }}</td></tr>
-                    <tr><td>Coordinates:</td><td>{{ data['Coordinate'] }}</td></tr>
-                    <tr><td>Gbif:</td><td>{{ data['OccurrenceID'] }}</td></tr>
+                    <tr><td>Class:</td><td>{{ data['Class'] }}</td></tr>
+                    <tr><td>Order:</td><td>{{ data['Order'] }}</td></tr>
+                    <tr><td>Family:</td><td>{{ data['Family'] }}</td></tr>
+                    <tr><td>Genus:</td><td class="italic">{{ data['Genus'] }}</td></tr>
+                    <tr><td>Species:</td><td class="italic">{{ data['Species'] }}</td></tr>
+                    <tr><td>Identifier:</td><td>{{ data['Identifier'] }}</td></tr>
+                    <tr><td>Continent:</td><td>{{ data['Continent'] }}</td></tr>
+                    <tr><td>Country:</td><td>{{ data['Country'] }}</td></tr>
+                    <tr><td>Location:</td><td>{{ data['Locality'] }}</td></tr>
+                    <tr><td>Coordinates:</td><td>{{ data['Coordinates'] }}</td></tr>
+                    <tr><td>GBIF:</td><td>{{ data['OccurrenceID'] }}</td></tr>
                 </tbody>
             </table>
             <div class="logo-container">
@@ -125,35 +126,35 @@ def create_html_pages(excel_file, image_folder, logo_folder, output_folder, home
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
-    print(f"Cartella di output: {output_folder}")
+    print(f"Output folder: {output_folder}")
 
-    # Copia i loghi e l'icona home con richiesta di sovrascrittura
+    # Copy logos and the home icon with overwrite confirmation
     copy_file_with_prompt(os.path.join(logo_folder, 'logo1.png'), os.path.join(output_folder, 'logo1.png'))
     copy_file_with_prompt(os.path.join(logo_folder, 'logo2.png'), os.path.join(output_folder, 'logo2.png'))
     home_dest = os.path.join(output_folder, 'home.png')
 
-    # Evita di copiare il file se è già nella destinazione
+    # Avoid copying the file if it is already in the destination folder
     if os.path.abspath(home_icon) != os.path.abspath(home_dest):
         copy_file_with_prompt(home_icon, home_dest)
     else:
-        print(f"ℹ️ Il file home.png è già nella destinazione. Nessuna copia necessaria.")
+        print(f"ℹ️ The file home.png is already in the destination folder. No copy needed.")
 
         logo1_path = "logo1.png"
         logo2_path = "logo2.png"
         home_icon = "home.png"
 
 
-    # Itera attraverso le righe del DataFrame per creare i file HTML
+    # Loop through DataFrame rows and generate individual HTML files
     for index, row in df.iterrows():
         if pd.isna(row['Foto']):
             continue
 
         image_file = os.path.join(image_folder, row['Foto'])
         if not os.path.exists(image_file):
-            print(f"❌ Immagine non trovata: {image_file}")
+            print(f"❌ Image not found: {image_file}")
             continue
 
-        # Percorso relativo per l'HTML (senza copia)
+        # Relative path for the HTML file (without copying)
         image_path = row['Foto']
 
         data = row.to_dict()
@@ -171,7 +172,7 @@ def create_html_pages(excel_file, image_folder, logo_folder, output_folder, home
         safe_image_name = re.sub(r'[^a-zA-Z0-9_-]', '_', image_name)
         output_file = os.path.join(output_folder, f"{safe_image_name}.html")
 
-        print(f"✅ Creando file HTML: {output_file}")
+        print(f"✅ Generating HTML files: {output_file}")
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(html_content)
 
@@ -179,7 +180,7 @@ def create_html_pages(excel_file, image_folder, logo_folder, output_folder, home
 
 
 
-# Selezione dei file e cartelle
+# File and folder selection
 excel_file = select_excel_file()
 image_folder = select_image_folder()
 logo_folder = select_logo_folder()
@@ -189,4 +190,4 @@ home_icon = select_home_icon()
 if excel_file and image_folder and logo_folder and output_folder and home_icon:
     create_html_pages(excel_file, image_folder, logo_folder, output_folder, home_icon)
 else:
-    print("Operazione annullata: uno o più file/cartelle non sono stati selezionati.")
+    print("Operation canceled: one or more files/folders were not selected.")
